@@ -1,5 +1,21 @@
-LuceneQueryBuilder
-==================
+Quickstart
+==========
+
+```cs
+using static LuceneQueryBuilder.Query.Matcher;
+using static LuceneQueryBuilder.Tokenization.Tokenizer;
+
+var query = Match("author", "Cha*")
+	.And(MatchAll("title", Tokenize("tal two cit").Select(t => $"{t}*")))
+	.Not("type", "abridged")
+	.Build();
+```
+
+will yield
+
+```cs
+"((author:Cha* AND ((title:tal* AND title:two*) AND title:cit*)) NOT type:abridged)"
+```
 
 Building Queries
 ----------------
@@ -43,6 +59,82 @@ will group the sub-queries as expected:
 "((name:John* AND (city:Zürich OR city:Seattle)) OR (name:Joha* AND (city:Paris OR city:London)))"
 ```
 
+Queries don't Mutate
+--------------------
+
+Queries aren't mutated: you must assign their return value.
+
+You shouldn't do this:
+
+```cs
+var query = Match("foo", "bar");
+
+// wrong: the return value isn't assigned and therefore gets lost
+query.And("fizz", "buzz");
+
+query.Build(); // "foo:bar"
+```
+
+but this
+
+```cs
+var query = Match("foo", "bar");
+
+// assign the value to track the updated expression
+query = query.And("fizz", "buzz");
+
+query.Build(); // "(foo:bar AND fizz:buzz)"
+
+Syntactic Sugar
+---------------
+
+```cs
+Match("foo", "bar").And("foo", "buzz");
+```
+
+can be written as
+
+```cs
+MatchAll(
+	Match("foo", "bar"),
+	Match("foo", "buzz")
+);
+```
+
+or
+
+```cs
+MatchAll(
+	new [] {
+		Match("foo", "bar"),
+		Match("foo", "buzz")
+	}
+);
+```
+
+or simply
+
+```cs
+MatchAll("foo", new [] {"bar", "buzz"});
+```
+
+The equivalent syntactic sugar for composing the `Or` operation is provided by `MatchAny`.
+```
+
+Util
+----
+
+The `Util` class provides utilities such as search term escaping (per https://docs.couchdb.org/en/master/ddocs/search.html#query-syntax)
+
+```cs
+using static LuceneQueryBuilder.Util;
+
+EscapeTerm("foo-bar!") // "foo\-bar\!"
+```
+
+Advanced Usage
+==============
+
 Tokenizing Terms
 ----------------
 
@@ -79,13 +171,44 @@ will yield
 "(((name:foo* AND name:bar*) AND name:flim*) AND name:flam*)"
 ```
 
-Util
-----
+Traversing Expressions
+----------------------
 
-The `Util` class provides utilities such as search term escaping (per https://docs.couchdb.org/en/master/ddocs/search.html#query-syntax)
+`Expression`s are modeled as a simple `Constraint` (e.g. "foo:bar~") or as having a `Left` sub-`Expression`, an `Operator`, and a `Right` sub-`Expression`.
+This means that they can easily be traversed if necessary. Here's an example of traversing an `Expression` in an extension method to ensure the query is scoped
+to some field (e.g. the query must be scoped to a tenant field in a multi-tenant application):
 
 ```cs
-using static LuceneQueryBuilder.Util;
+public static class ExpressionExtensions
+{
+	public static Expression ThrowUnlessScopedTo(this Expression e, string field)
+	{
+		if (!HasScopeConstraint(e, field))
+		{
+			throw new Exception($"Expression must be scoped by field '{field}'");
+		}
 
-EscapeTerm("foo-bar!") // "foo\-bar\!"
+		return e;
+	}
+
+	private static bool HasScopeConstraint(Expression e, string field)
+	{
+		if (e.IsConstraint)
+		{
+			return e.GetConstraint().Field == field;
+		}
+
+		switch (e.GetOperator())
+		{
+			case Operator.Or:
+				return HasScopeConstraint(e.GetLeft(), field) && HasScopeConstraint(e.GetRight(), field);
+			case Operator.And:
+				return HasScopeConstraint(e.GetLeft(), field) || HasScopeConstraint(e.GetRight(), field);
+			case Operator.Not:
+				return HasScopeConstraint(e.GetLeft(), field);
+			default:
+				throw new Exception($"Unknown operator: {e.GetOperator()}");
+		}
+	}
+}
 ```
