@@ -1,4 +1,8 @@
-﻿namespace LuceneQueryBuilder.Query
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LuceneQueryBuilder.Query
 {
     public static class Matcher
     {
@@ -11,5 +15,23 @@
         /// <returns>Returns the unmodified expression.</returns>
         /// </summary>
         public static Expression Match(Expression e) => e;
+
+        public static Expression MatchAll(string field, IEnumerable<string> values) =>
+            MatchAll(ToArray(field, values));
+
+        public static Expression MatchAll(params Expression[] expressions) =>
+            Aggregate(expressions, (acc, e) => acc.And(e));
+
+        public static Expression MatchAny(string field, IEnumerable<string> values) =>
+            MatchAny(ToArray(field, values));
+
+        public static Expression MatchAny(params Expression[] expressions) =>
+            Aggregate(expressions, (acc, e) => acc.Or(e));
+
+        private static Expression[] ToArray(string field, IEnumerable<string> values) =>
+            values.Select(v => Match(field, v)).ToArray();
+
+        private static Expression Aggregate(IEnumerable<Expression> expressions, Func<Expression, Expression, Expression> aggregator) =>
+            expressions.Aggregate(aggregator);
     }
 }

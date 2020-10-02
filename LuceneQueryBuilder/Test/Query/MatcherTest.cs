@@ -62,16 +62,53 @@ namespace Test.Query
         }
 
         [TestMethod]
-        public void CanAggregate()
+        public void TestMatchAll()
         {
-            var a = Match("fieldA", "A");
-            var b = Match("fieldB", "B");
-            var c = Match("fieldC", "C");
+            var a = Match("foo", "bar").And("foo", "buzz");
 
-            var expected = a.And(b).And(c);
-            var actual = new[] { a, b, c }.Aggregate((acc, x) => acc.And(x));
+            var b = MatchAll(
+                Match("foo", "bar"),
+                Match("foo", "buzz")
+            );
 
-            Assert.AreEqual(expected.Build(), actual.Build());
+            var c = MatchAll(
+                new[] {
+                    Match("foo", "bar"),
+                    Match("foo", "buzz")
+                }
+            );
+
+            var d = MatchAll("foo", new[] { "bar", "buzz" });
+
+            foreach (var expression in new[]{a,b,c,d})
+            {
+                AssertSerialization("(foo:bar AND foo:buzz)", expression);
+            }
+        }
+
+        [TestMethod]
+        public void TestMatchAny()
+        {
+            var a = Match("foo", "bar").Or("foo", "buzz");
+
+            var b = MatchAny(
+                Match("foo", "bar"),
+                Match("foo", "buzz")
+            );
+
+            var c = MatchAny(
+                new[] {
+                    Match("foo", "bar"),
+                    Match("foo", "buzz")
+                }
+            );
+
+            var d = MatchAny("foo", new[] { "bar", "buzz" });
+
+            foreach (var expression in new[] { a, b, c, d })
+            {
+                AssertSerialization("(foo:bar OR foo:buzz)", expression);
+            }
         }
 
         [TestMethod]
