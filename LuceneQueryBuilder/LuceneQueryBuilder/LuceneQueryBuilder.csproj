@@ -41,6 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Query\Constraint.cs" />
+    <Compile Include="Query\Expression.cs" />
+    <Compile Include="Query\Buildable.cs" />
+    <Compile Include="Query\Matcher.cs" />
+    <Compile Include="Query\Operator.cs" />
     <Compile Include="Tokenization\Analyzer.cs" />
     <Compile Include="Tokenization\Tokenizer.cs" />
     <Compile Include="Util.cs" />
