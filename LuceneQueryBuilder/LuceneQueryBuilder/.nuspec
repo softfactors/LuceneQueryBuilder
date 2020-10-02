@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>LuceneQueryBuilder</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <description>A fluent query builder for Lucene search indexes.</description>
     <authors>David Sulc</authors>
 
