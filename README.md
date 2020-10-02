@@ -119,7 +119,6 @@ MatchAll("foo", new [] {"bar", "buzz"});
 ```
 
 The equivalent syntactic sugar for composing the `Or` operation is provided by `MatchAny`.
-```
 
 Util
 ----
@@ -181,34 +180,34 @@ to some field (e.g. the query must be scoped to a tenant field in a multi-tenant
 ```cs
 public static class ExpressionExtensions
 {
-	public static Expression ThrowUnlessScopedTo(this Expression e, string field)
-	{
-		if (!HasScopeConstraint(e, field))
-		{
-			throw new Exception($"Expression must be scoped by field '{field}'");
-		}
+    public static Expression ThrowUnlessScopedTo(this Expression e, string field)
+    {
+        if (!HasScopeConstraint(e, field))
+        {
+            throw new Exception($"Expression must be scoped by field '{field}'");
+        }
 
-		return e;
-	}
+        return e;
+    }
 
-	private static bool HasScopeConstraint(Expression e, string field)
-	{
-		if (e.IsConstraint)
-		{
-			return e.GetConstraint().Field == field;
-		}
+    private static bool HasScopeConstraint(Expression e, string field)
+    {
+        if (e.IsConstraint)
+        {
+            return e.GetConstraint().Field == field;
+        }
 
-		switch (e.GetOperator())
-		{
-			case Operator.Or:
-				return HasScopeConstraint(e.GetLeft(), field) && HasScopeConstraint(e.GetRight(), field);
-			case Operator.And:
-				return HasScopeConstraint(e.GetLeft(), field) || HasScopeConstraint(e.GetRight(), field);
-			case Operator.Not:
-				return HasScopeConstraint(e.GetLeft(), field);
-			default:
-				throw new Exception($"Unknown operator: {e.GetOperator()}");
-		}
-	}
+        switch (e.GetOperator())
+        {
+            case Operator.Or:
+                return HasScopeConstraint(e.GetLeft(), field) && HasScopeConstraint(e.GetRight(), field);
+            case Operator.And:
+                return HasScopeConstraint(e.GetLeft(), field) || HasScopeConstraint(e.GetRight(), field);
+            case Operator.Not:
+                return HasScopeConstraint(e.GetLeft(), field);
+            default:
+                throw new Exception($"Unknown operator: {e.GetOperator()}");
+        }
+    }
 }
 ```
