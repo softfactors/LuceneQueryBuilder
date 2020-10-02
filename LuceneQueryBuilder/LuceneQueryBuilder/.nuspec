@@ -8,7 +8,7 @@
 
     <title>LuceneQueryBuilder</title>
     <projectUrl>https://github.com/softfactors/LuceneQueryBuilder</projectUrl>
-    <repository type="git" url="https://github.com/softfactors/LuceneQueryBuilder.git" branch="master" commit="ff0d50f2ff5a909fabd1fbc5e03d32f20f3e53db" />
+    <repository type="git" url="https://github.com/softfactors/LuceneQueryBuilder.git" branch="master" commit="9a140498d3eb89c72383673b195626b50ce195aa" />
     <license type="expression">MIT</license>
     <copyright>softfactors AG</copyright>
     <tags>Lucene CouchDB Cloudant</tags>
