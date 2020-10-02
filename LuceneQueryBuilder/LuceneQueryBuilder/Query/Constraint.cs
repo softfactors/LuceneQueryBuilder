@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace LuceneQueryBuilder.Query
 {
@@ -6,8 +7,24 @@ namespace LuceneQueryBuilder.Query
     {
         public Constraint(string field, string value)
         {
+            ThrowIfEmpty(field, "field");
+            ThrowIfEmpty(value, "value");
+
             Field = field;
             Value = value;
+        }
+
+        private static void ThrowIfEmpty(string s, string paramName)
+        {
+            if (s == null)
+            {
+                throw new ArgumentException($"Constraint `{paramName}` cannot be null");
+            }
+
+            if (s.Trim() == "")
+            {
+                throw new ArgumentException($"Constraint `{paramName}` cannot be empty");
+            }
         }
 
         /// <summary>Returns the field on which the constraint is defined.</summary>
