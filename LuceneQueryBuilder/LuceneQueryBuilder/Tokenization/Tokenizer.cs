@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace LuceneQueryBuilder.Tokenization
@@ -18,12 +19,19 @@ namespace LuceneQueryBuilder.Tokenization
         ///    Tokenize("foo/bar0flim flam", Analyzer.Simple)
         /// </code>
         /// returns `new[]{ "foo", "bar", "flim", "flam" }`.
+        /// <code>
+        ///    Tokenize(" 7/3 ", Analyzer.Simple)
+        /// </code>
+        /// returns `new string[]{  }`.
         /// </example>
         /// </summary>
         /// <param name="term">String to escape</param>
         /// <param name="analyzer">Tokenization.Analyzer indicating which tokenization rules to apply</param>
         /// <returns>an enumerable of string tokens composing the <c>term</c></returns>
-        public static IEnumerable<string> Tokenize(string term, Analyzer analyzer = Analyzer.Whitespace)
+        public static IEnumerable<string> Tokenize(string term, Analyzer analyzer = Analyzer.Whitespace) =>
+            RejectEmptyTokens(GetTokens(term, analyzer));
+
+        private static IEnumerable<string> GetTokens(string term, Analyzer analyzer)
         {
             switch (analyzer)
             {
@@ -38,6 +46,8 @@ namespace LuceneQueryBuilder.Tokenization
             }
         }
 
+        private static IEnumerable<string> RejectEmptyTokens(IEnumerable<string> tokens) => tokens.Where(t => t != "");
+
         /// <summary>Tokenizes <c>term</c> according to the <c>boundaryRegex</c> regular expression.
         ///
         /// <example>For example:
@@ -45,11 +55,15 @@ namespace LuceneQueryBuilder.Tokenization
         ///    Tokenize("foo/bar0flim flam", @"[\d/]")
         /// </code>
         /// returns `new[] { "foo", "bar", "flim flam" }`.
+        /// <code>
+        ///    Tokenize(" @@ ", "[@]")
+        /// </code>
+        /// returns `new [] { " ", " " }`.
         /// </example>
         /// </summary>
         /// <param name="term">String to escape</param>
         /// <param name="boundaryRegex">String of regular expression to use when tokenizing the <c>term</c></param>
         /// <returns>an enumerable of string tokens composing the <c>term</c></returns>
-        public static IEnumerable<string> Tokenize(string term, string boundaryRegex) => Regex.Split(term, boundaryRegex);
+        public static IEnumerable<string> Tokenize(string term, string boundaryRegex) => RejectEmptyTokens(Regex.Split(term, boundaryRegex));
     }
 }

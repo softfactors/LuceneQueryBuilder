@@ -34,5 +34,16 @@ namespace Test.Tokenization
         {
             CollectionAssert.AreEqual(new[] { "foo", "bar", "flim flam" }, Tokenize(Term, @"[\d/]").ToList());
         }
+
+        [TestMethod]
+        public void TokenizerRejectsEmptyStrings()
+        {
+            CollectionAssert.AreEqual(new string[] { }, Tokenize("", Analyzer.Keyword).ToList());
+            CollectionAssert.AreEqual(new string[] {  }, Tokenize(" 7/3 ", Analyzer.Simple).ToList());
+            // ReSharper disable once RedundantArgumentDefaultValue
+            CollectionAssert.AreEqual(new string[] { }, Tokenize("  ", Analyzer.Whitespace).ToList());
+            CollectionAssert.AreEqual(new string[] { }, Tokenize("@@", "[@]").ToList());
+            CollectionAssert.AreEqual(new [] { " ", " " }, Tokenize(" @@ ", "[@]").ToList());
+        }
     }
 }
