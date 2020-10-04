@@ -37,7 +37,10 @@ namespace LuceneQueryBuilder.Query
         private static Expression[] ToArray(string field, IEnumerable<string> values) =>
             values.Select(v => Match(field, v)).ToArray();
 
-        private static Expression Aggregate(IEnumerable<Expression> expressions, Func<Expression, Expression, Expression> aggregator) =>
-            expressions.Aggregate(aggregator);
+        private static Expression Aggregate(IEnumerable<Expression> expressions, Func<Expression, Expression, Expression> aggregator)
+        {
+            var expressionsList = expressions.ToList();
+            return expressionsList.Any() ? expressionsList.Aggregate(aggregator) : Expression.Empty();
+        }
     }
 }

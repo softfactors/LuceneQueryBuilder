@@ -120,6 +120,36 @@ MatchAll("foo", new [] {"bar", "buzz"});
 
 The equivalent syntactic sugar for composing the `Or` operation is provided by `MatchAny`.
 
+Empty Expressions
+-----------------
+
+Empty expressions are essentially ignored during composition, and building an empty expression will yield `"*:*"` (i.e. a query returning all results):
+
+```cs
+using static LuceneQueryBuilder.Query.Matcher;
+
+var nonEmpty = Match("fieldA", "A");
+var empty = MatchAll("fieldB", Enumerable.Empty<string>());
+
+nonEmpty.And(empty).Build(); // "fieldA:A"
+empty.And(nonEmpty).Build(); // "fieldA:A"
+
+nonEmpty.Or(empty).Build(); // "fieldA:A"
+empty.Or(nonEmpty).Build(); // "fieldA:A"
+
+empty.Build(); // "*:*"
+empty.And(empty).Build(); // "*:*"
+empty.Or(empty).Build(); // "*:*"
+```
+
+Queries involving the "NOT" operator behave slightly differently when composing with an empty expression:
+
+```cs
+nonEmpty.Not(empty).Build(); // "fieldA:A"
+empty.Not(empty).Build(); // "*:*"
+empty.Not(nonEmpty).Build(); // "(*:* NOT fieldA:A)"
+```
+
 Util
 ----
 

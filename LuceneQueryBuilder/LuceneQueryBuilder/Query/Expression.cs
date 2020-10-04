@@ -5,8 +5,14 @@ namespace LuceneQueryBuilder.Query
 {
     public class Expression : Buildable
     {
-        public Expression(Operator op, Expression left, Expression right = null)
+        public static Expression Empty()
         {
+            return new Expression();
+        }
+
+        public Expression(Operator op, Expression left, Expression right)
+        {
+            IsEmpty = false;
             Operator = op;
             Left = left;
             Right = right;
@@ -14,13 +20,19 @@ namespace LuceneQueryBuilder.Query
 
         public Expression(Constraint constraint)
         {
+            IsEmpty = false;
             Constraint = constraint;
+        }
+
+        public Expression(bool empty = true)
+        {
+            IsEmpty = empty;
         }
 
         /// <summary>
         /// <returns>Returns a string serialization of the query expression, e.g. "(name:foo* OR name:bar~)".</returns>
         /// </summary>
-        public string Build() => ToBuilder().ToString();
+        public string Build() => !IsEmpty ? ToBuilder().ToString() : new Constraint("*", "*").ToBuilder().ToString();
 
         protected internal override StringBuilder ToBuilder()
         {
@@ -70,7 +82,24 @@ namespace LuceneQueryBuilder.Query
         private Expression Apply(Operator op, (string field, string value) constraint) =>
             Apply(op, new Expression(new Constraint(constraint.field, constraint.value)));
 
-        private Expression Apply(Operator op, Expression e) => new Expression(op, this, e);
+        private Expression Apply(Operator op, Expression e)
+        {
+            if (e.IsEmpty) return this;
+
+            if (!IsEmpty && !e.IsEmpty) return new Expression(op, this, e);
+
+            switch (op)
+            {
+                case Operator.And:
+                case Operator.Or:
+                    return e;
+                case Operator.Not:
+                    return new Expression(op, new Expression(new Constraint("*", "*")), e);
+
+                default:
+                    throw new ArgumentException($"Unknown operator: {op}");
+            }
+        }
 
         /// <summary>
         /// <returns>Returns the constraint contained by the query expression.</returns>
@@ -135,5 +164,7 @@ namespace LuceneQueryBuilder.Query
         private Expression Right { get; }
 
         private Constraint Constraint { get; }
+
+        public bool IsEmpty { get; }
     }
 }
