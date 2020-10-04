@@ -80,7 +80,9 @@ namespace Test.Query
 
             var d = MatchAll("foo", new[] { "bar", "buzz" });
 
-            foreach (var expression in new[]{a,b,c,d})
+            var e = MatchAll(Tokenize("bar buzz").Select(t => Match("foo", t)));
+
+            foreach (var expression in new[]{ a, b, c, d, e })
             {
                 AssertSerialization("(foo:bar AND foo:buzz)", expression);
             }
@@ -105,7 +107,9 @@ namespace Test.Query
 
             var d = MatchAny("foo", new[] { "bar", "buzz" });
 
-            foreach (var expression in new[] { a, b, c, d })
+            var e = MatchAny(Tokenize("bar buzz").Select(t => Match("foo", t)));
+
+            foreach (var expression in new[] { a, b, c, d, e })
             {
                 AssertSerialization("(foo:bar OR foo:buzz)", expression);
             }

@@ -19,11 +19,17 @@ namespace LuceneQueryBuilder.Query
         public static Expression MatchAll(string field, IEnumerable<string> values) =>
             MatchAll(ToArray(field, values));
 
+        public static Expression MatchAll(IEnumerable<Expression> expressions) =>
+            MatchAll(expressions.ToArray());
+
         public static Expression MatchAll(params Expression[] expressions) =>
             Aggregate(expressions, (acc, e) => acc.And(e));
 
         public static Expression MatchAny(string field, IEnumerable<string> values) =>
             MatchAny(ToArray(field, values));
+
+        public static Expression MatchAny(IEnumerable<Expression> expressions) =>
+            MatchAny(expressions.ToArray());
 
         public static Expression MatchAny(params Expression[] expressions) =>
             Aggregate(expressions, (acc, e) => acc.Or(e));
