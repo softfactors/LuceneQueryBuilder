@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>LuceneQueryBuilder</id>
-    <version>$version$</version>
+    <version>1.3</version>
     <description>A fluent query builder for Lucene search indexes.</description>
     <authors>David Sulc</authors>
 
     <title>LuceneQueryBuilder</title>
     <projectUrl>https://github.com/softfactors/LuceneQueryBuilder</projectUrl>
-    <repository type="git" url="https://github.com/softfactors/LuceneQueryBuilder.git" branch="master" commit="cf0a32e8e26bf988cf4a038ff70a232de59a8a8c" />
+    <repository type="git" url="https://github.com/softfactors/LuceneQueryBuilder.git" branch="master" commit="844d88724d5356584e437e889eb0060d99bb8dde" />
     <license type="expression">MIT</license>
     <copyright>softfactors AG</copyright>
     <tags>Lucene CouchDB Cloudant</tags>
