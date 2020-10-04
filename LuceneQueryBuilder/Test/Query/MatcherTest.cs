@@ -76,5 +76,15 @@ namespace Test.Query
                 AssertSerialization("(foo:bar OR foo:buzz)", expression);
             }
         }
+
+        [TestMethod]
+        public void CollectionMatchersReturnEmptyExpressionOnEmptyCollections()
+        {
+            var empty = Enumerable.Empty<Expression>().ToList();
+            var expectedSerialization = Expression.Empty().Build();
+
+            AssertSerialization(expectedSerialization, MatchAll(empty));
+            AssertSerialization(expectedSerialization, MatchAny(empty));
+        }
     }
 }

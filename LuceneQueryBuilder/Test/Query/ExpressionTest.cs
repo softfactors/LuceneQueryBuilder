@@ -17,10 +17,19 @@ namespace Test.Query
             Assert.AreEqual(expected, actual.Build());
         }
 
+        private static void AssertSerialization(Expression expected, Expression actual) =>
+            AssertSerialization(expected.Build(), actual);
+
         [TestMethod]
         public void CanSerializeConstraint()
         {
             AssertSerialization("foo:bar", Match("foo", "bar"));
+        }
+
+        [TestMethod]
+        public void SerializingAnEmptyExpressionYieldQueryReturningAllResults()
+        {
+            AssertSerialization("*:*", Expression.Empty());
         }
 
         [TestMethod]
@@ -109,6 +118,40 @@ namespace Test.Query
                 default:
                     throw new Exception($"Unknown operator: {e.GetOperator()}");
             }
+        }
+
+        [TestMethod]
+        public void ComposingEmptyExpressionWithAnd()
+        {
+            var nonEmpty = Match("fieldA", "A");
+            var empty = MatchAll("fieldB", Enumerable.Empty<string>());
+
+            AssertSerialization(nonEmpty, nonEmpty.And(empty));
+            AssertSerialization(nonEmpty, empty.And(nonEmpty));
+            AssertSerialization(empty, empty.And(empty));
+        }
+
+        [TestMethod]
+        public void ComposingEmptyExpressionWithOr()
+        {
+            var nonEmpty = Match("fieldA", "A");
+            var empty = Expression.Empty();
+
+            AssertSerialization(nonEmpty, nonEmpty.Or(empty));
+            AssertSerialization(nonEmpty, empty.Or(nonEmpty));
+            AssertSerialization(empty, empty.Or(empty));
+        }
+
+        [TestMethod]
+        public void ComposingEmptyExpressionWithNot()
+        {
+            var nonEmpty = Match("fieldA", "A");
+            var empty = Expression.Empty();
+
+            AssertSerialization(nonEmpty, nonEmpty.Not(empty));
+            AssertSerialization(empty, empty.Not(empty));
+
+            AssertSerialization("(*:* NOT fieldA:A)", empty.Not(nonEmpty));
         }
     }
 }
