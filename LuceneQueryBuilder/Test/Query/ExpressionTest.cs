@@ -27,6 +27,26 @@ namespace Test.Query
         }
 
         [TestMethod]
+        public void CanSerializeBlankValue()
+        {
+            AssertSerialization("foo:\"  \"", Match("foo", "  "));
+        }
+
+        [TestMethod]
+        public void DoesNotIncludeWildcardInPhrase()
+        {
+            AssertSerialization("foo:\"  \"*", Match("foo", "\"  \"*"));
+        }
+
+        [TestMethod]
+        public void TrimOnlyNonBlankValues()
+        {
+            AssertSerialization("foo:\"  \"", Match("foo", "  "));
+            AssertSerialization("foo:\"  \"", Match("foo", "\"  \""));
+            AssertSerialization("foo:*", Match("foo", "   *"));
+        }
+
+        [TestMethod]
         public void SerializingAnEmptyExpressionYieldQueryReturningAllResults()
         {
             AssertSerialization("*:*", Expression.Empty());

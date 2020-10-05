@@ -7,24 +7,13 @@ namespace LuceneQueryBuilder.Query
     {
         public Constraint(string field, string value)
         {
-            ThrowIfEmpty(field, "field");
-            ThrowIfEmpty(value, "value");
+            if (field == null) throw new ArgumentException($"`field` cannot be null");
+            if (field.Trim() == "") throw new ArgumentException($"`field` cannot be blank");
 
             Field = field;
-            Value = value;
-        }
-
-        private static void ThrowIfEmpty(string s, string paramName)
-        {
-            if (s == null)
-            {
-                throw new ArgumentException($"Constraint `{paramName}` cannot be null");
-            }
-
-            if (s.Trim() == "")
-            {
-                throw new ArgumentException($"Constraint `{paramName}` cannot be empty");
-            }
+            // blank values are allowed, as they could be indexed via the Keyword analyzer
+            // and should therefore be searchable
+            Value = value ?? throw new ArgumentException($"`value` cannot be null");
         }
 
         /// <summary>Returns the field on which the constraint is defined.</summary>
@@ -33,6 +22,12 @@ namespace LuceneQueryBuilder.Query
         /// <summary>Returns the constraint applied (e.g. `foo*`).</summary>
         public string Value { get; }
 
-        protected internal override StringBuilder ToBuilder() => new StringBuilder($"{Field}:{Value}");
+        protected internal override StringBuilder ToBuilder()
+        {
+            var trimmedValue = Value.Trim();
+            return trimmedValue != ""
+                ? new StringBuilder($"{Field}:{trimmedValue}")
+                : new StringBuilder($"{Field}:\"{Value}\"");
+        }
     }
 }
