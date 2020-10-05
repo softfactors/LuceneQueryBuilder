@@ -1,3 +1,11 @@
+1.4
+===
+
+Fixes
+-----
+
+Blank values are accepted as constraint values: these previously threw `ArgumentException`
+
 1.3
 ===
 
