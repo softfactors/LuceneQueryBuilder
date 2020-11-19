@@ -84,6 +84,7 @@ var query = Match("foo", "bar");
 query = query.And("fizz", "buzz");
 
 query.Build(); // "(foo:bar AND fizz:buzz)"
+```
 
 Syntactic Sugar
 ---------------
