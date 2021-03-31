@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneQueryBuilder", "Lucen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{3DBBBCBB-303D-4BEC-AA05-0FEE851051CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneQueryBuilder.NetStandard", "LuceneQueryBuilder.NetStandard\LuceneQueryBuilder.NetStandard.csproj", "{831E9C08-BDDA-4083-B9E8-E35912B73590}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3DBBBCBB-303D-4BEC-AA05-0FEE851051CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DBBBCBB-303D-4BEC-AA05-0FEE851051CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DBBBCBB-303D-4BEC-AA05-0FEE851051CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{831E9C08-BDDA-4083-B9E8-E35912B73590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{831E9C08-BDDA-4083-B9E8-E35912B73590}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{831E9C08-BDDA-4083-B9E8-E35912B73590}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{831E9C08-BDDA-4083-B9E8-E35912B73590}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
