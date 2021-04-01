@@ -1,3 +1,10 @@
+2.0
+===
+
+* main LuceneQueryBuilder library was updated to use .Net standard 2.0
+* Test library was updated to use .Net 5
+* updated dependent NuGet package versions
+
 1.4
 ===
 
