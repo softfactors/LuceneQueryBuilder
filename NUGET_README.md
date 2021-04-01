@@ -9,7 +9,7 @@ Publishing a new package version
 6. Commit in git ("bump version to x.y") and tag commit with version number ("vx.y")
 7. Copy git hash into the `.nuspec` `repository` tag's `commit` attribute
 8. Commit changes in git and push (including the tag)
-9. From within the LuceneQueryBuilder project directory, run `nuget pack -IncludeReferencedProjects -properties Configuration=Release`
+9. From within the LuceneQueryBuilder project directory (containing the `.nuspec` file), run `nuget pack -IncludeReferencedProjects -properties Configuration=Release`
 10. Publish the updated package with
 
 ```
